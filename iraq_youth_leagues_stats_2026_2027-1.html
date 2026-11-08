@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101d2c">
+<title>إحصائيات الفئات العمرية | الدوري العراقي 2026–2027</title>
+<style>
+:root{--bg:#0b1420;--panel:#132235;--panel2:#192d43;--line:#29425d;--txt:#eef5fb;--muted:#9eb2c7;--gold:#e7b84b;--green:#31bd83;--red:#ee7272;--blue:#6ca8e8}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#09121d,#10243a);font-family:Tahoma,Arial,sans-serif;color:var(--txt);min-height:100vh}
+header{padding:22px 18px;background:#101d2c;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.wrap{max-width:1200px;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+h1{font-size:22px;margin:0 0 6px}header p{margin:0;color:var(--muted);font-size:13px}
+select,input,button{font:inherit}button{border:0;border-radius:10px;padding:10px 14px;background:var(--gold);color:#17202a;font-weight:bold;cursor:pointer}
+button.secondary{background:#233a52;color:var(--txt);border:1px solid var(--line)}button.danger{background:#522d36;color:#ffdfe3}button.small{padding:7px 10px;font-size:12px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.tab{background:#1b3047;color:var(--muted);border:1px solid var(--line)}.tab.active{background:var(--gold);color:#17202a}
+main{max-width:1200px;margin:22px auto;padding:0 16px 50px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card,.panel{background:linear-gradient(145deg,var(--panel),#102033);border:1px solid var(--line);border-radius:16px;padding:16px}
+.stat{font-size:27px;font-weight:bold;color:var(--gold);margin-top:7px}.muted{color:var(--muted);font-size:13px}.section{display:none}.section.active{display:block}
+.row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:150px}label{font-size:12px;color:var(--muted)}
+input,select{width:100%;background:#0c1928;color:var(--txt);border:1px solid var(--line);border-radius:9px;padding:10px;min-height:40px}
+h2{font-size:18px;margin:0 0 14px}h3{font-size:15px;margin:0 0 10px}
+.panel{margin-bottom:14px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+table{width:100%;border-collapse:collapse;min-width:650px}th,td{padding:10px 9px;text-align:right;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--gold);background:#182c42}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin-top:12px}
+.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#233c55;color:#dbeaff;font-size:11px}.good{color:var(--green)}.bad{color:var(--red)}
+.notice{border-right:3px solid var(--gold);background:#2b2a22;padding:12px;border-radius:8px;color:#f5e7bf;font-size:13px;line-height:1.8;margin:12px 0}
+.empty{color:var(--muted);padding:22px;text-align:center}.hidden{display:none!important}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:24px}
+@media(max-width:750px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:18px}header{position:static}.row .field{min-width:130px}}
+@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.stat{font-size:22px}}
+@media print{header,nav,.actions,button{display:none!important}body{background:white;color:black}.panel,.card{background:white;color:black;border:1px solid #aaa}th{background:#eee;color:black}td,th{color:black}}
+</style></head>
+<body>
+<header><div class="wrap">
+ <div class="top"><div><h1>منظومة إحصائيات الفئات العمرية</h1><p>الدوري العراقي لكرة القدم • موسم 2026–2027 • U17 / U19 / U21</p></div>
+ <div class="row"><div class="field" style="min-width:125px"><label>الفئة الحالية</label><select id="category" onchange="render()"><option>U17</option><option>U19</option><option>U21</option></select></div><button class="secondary" onclick="backup()">نسخ احتياطي</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">استعادة</button><input id="restoreFile" type="file" accept=".json" class="hidden" onchange="restore(event)"></div></div>
+ <nav><button class="tab active" data-tab="home" onclick="tab('home')">الرئيسية</button><button class="tab" data-tab="players" onclick="tab('players')">اللاعبون</button><button class="tab" data-tab="clubs" onclick="tab('clubs')">الأندية</button><button class="tab" data-tab="matches" onclick="tab('matches')">المباريات</button><button class="tab" data-tab="leaders" onclick="tab('leaders')">الهدافون والإحصائيات</button><button class="tab" data-tab="settings" onclick="tab('settings')">الإعدادات</button></nav>
+</div></header>
+<main>
+<section id="home" class="section active">
+ <div class="grid">
+  <div class="card"><div class="muted">عدد اللاعبين</div><div class="stat" id="sPlayers">0</div></div>
+  <div class="card"><div class="muted">الأندية المسجلة</div><div class="stat" id="sClubs">0</div></div>
+  <div class="card"><div class="muted">المباريات المسجلة</div><div class="stat" id="sMatches">0</div></div>
+  <div class="card"><div class="muted">الأهداف المسجلة</div><div class="stat" id="sGoals">0</div></div>
+ </div>
+ <div class="panel" style="margin-top:14px"><h2>ملخص الفئة <span id="homeCat" class="pill">U17</span></h2><div id="groupSummary" class="muted"></div>
+ <div class="notice">تنبيه: قوائم الأندية الأولية مدخلة وفق القرعة المنشورة لفئتي U17 وU21. فئة U19 مهيأة لإضافة الأندية بعد تثبيت قائمتها. شروط مواليد الموسم يجب إدخالها من الإعدادات بعد اعتماد تعليمات الاتحاد الرسمية؛ لا تُعد نتيجة العمر الحالية إثباتاً رسمياً للأهلية.</div>
+ </div>
+ <div class="panel"><h2>آخر المباريات المسجلة</h2><div id="recentMatches"></div></div>
+</section>
+<section id="players" class="section">
+ <div class="panel"><h2>إضافة لاعب / تعديل بياناته</h2><input id="editPlayerId" type="hidden">
+ <div class="row">
+ <div class="field"><label>اسم اللاعب الكامل</label><input id="pName" placeholder="الاسم الثلاثي أو الكامل"></div>
+ <div class="field"><label>النادي</label><select id="pClub"></select></div>
+ <div class="field"><label>تاريخ الميلاد</label><input id="pDob" type="date"></div>
+ <div class="field"><label>المركز</label><select id="pPos"><option>حارس مرمى</option><option>مدافع</option><option>ظهير</option><option>محور</option><option>وسط</option><option>جناح</option><option>مهاجم</option></select></div>
+ <div class="field"><label>رقم القميص</label><input id="pNumber" type="number" min="1" max="99"></div>
+ </div><div class="actions"><button onclick="savePlayer()">حفظ اللاعب</button><button class="secondary" onclick="clearPlayer()">تفريغ الحقول</button></div>
+ </div>
+ <div class="panel"><div class="row"><div class="field"><label>بحث باسم اللاعب</label><input id="playerSearch" oninput="renderPlayers()" placeholder="اكتب اسم اللاعب"></div><div class="field"><label>تصفية حسب النادي</label><select id="playerClubFilter" onchange="renderPlayers()"></select></div></div><div id="playersTable"></div></div>
+</section>
+<section id="clubs" class="section">
+ <div class="panel"><h2>إدارة الأندية في الفئة الحالية</h2><div class="row"><div class="field"><label>اسم النادي</label><input id="clubName" placeholder="اسم النادي"></div><div class="field"><label>المجموعة</label><input id="clubGroup" placeholder="مثال: المجموعة الأولى"></div><button onclick="addClub()">إضافة النادي</button></div><div id="clubsTable"></div></div>
+</section>
+<section id="matches" class="section">
+ <div class="panel"><h2>تسجيل مباراة</h2><input id="editMatchId" type="hidden"><div class="row">
+ <div class="field"><label>التاريخ</label><input id="mDate" type="date"></div><div class="field"><label>الفريق الأول</label><select id="mHome"></select></div><div class="field"><label>أهداف الأول</label><input id="mHG" type="number" min="0" value="0"></div><div class="field"><label>الفريق الثاني</label><select id="mAway"></select></div><div class="field"><label>أهداف الثاني</label><input id="mAG" type="number" min="0" value="0"></div><div class="field"><label>الملعب / ملاحظة</label><input id="mVenue" placeholder="اسم الملعب"></div>
+ </div><div class="actions"><button onclick="saveMatch()">حفظ المباراة</button><button class="secondary" onclick="clearMatch()">تفريغ الحقول</button></div></div>
+ <div class="panel"><h2>المباريات والنتائج</h2><div id="matchesTable"></div></div>
+</section>
+<section id="leaders" class="section">
+ <div class="panel"><h2>إحصائيات اللاعبين</h2><div class="muted">أدخل المشاركات والأهداف والتمريرات والبطاقات لكل لاعب من زر «إحصائيات» في جدول اللاعبين.</div><div id="leaderTable"></div></div>
+ <div class="panel"><h2>ترتيب الأندية</h2><div id="standings"></div></div>
+</section>
+<section id="settings" class="section">
+ <div class="panel"><h2>إعدادات أهلية اللاعبين</h2><div class="notice">لا توجد لدينا حتى الآن وثيقة رسمية مؤكدة لمواليد كل فئة في موسم 2026–2027. اترك الحقول فارغة إلى حين إدخال المواليد المعتمدة من الاتحاد. سيعرض البرنامج العمر فقط دون إصدار حكم أهلية رسمي.</div>
+ <div class="row"><div class="field"><label>آخر سنة ميلاد مسموحة لـ U17</label><input id="rule17" type="number" placeholder="اتركه فارغاً حتى التأكيد"></div><div class="field"><label>آخر سنة ميلاد مسموحة لـ U19</label><input id="rule19" type="number" placeholder="اتركه فارغاً حتى التأكيد"></div><div class="field"><label>آخر سنة ميلاد مسموحة لـ U21</label><input id="rule21" type="number" placeholder="اتركه فارغاً حتى التأكيد"></div></div><div class="actions"><button onclick="saveRules()">حفظ تعليمات المواليد</button><button class="secondary" onclick="exportCSV()">تصدير اللاعبين CSV</button><button class="secondary" onclick="window.print()">طباعة الصفحة</button></div></div>
+ <div class="panel"><h2>إدارة البيانات</h2><p class="muted">البيانات تحفظ محلياً في المتصفح على هذا الجهاز. استخدم النسخ الاحتياطي لنقلها إلى جهاز آخر. لا تحذف بيانات المتصفح قبل أخذ نسخة احتياطية.</p><div class="actions"><button class="danger" onclick="clearAll()">حذف جميع بيانات البرنامج</button></div></div>
+</section>
+<footer>منظومة إحصائية مستقلة غير رسمية • لا تمثل الاتحاد العراقي لكرة القدم • احفظ نسخة احتياطية دورياً</footer>
+</main>
+<script>
+const seed={
+ U17:[
+ ["الشرطة","المجموعة الأولى"],["الحدود","المجموعة الأولى"],["زاخو","المجموعة الأولى"],["غاز الشمال","المجموعة الأولى"],["أربيل","المجموعة الأولى"],["الجولان","المجموعة الأولى"],["ديالى","المجموعة الأولى"],
+ ["الطلبة","المجموعة الثانية"],["الحشد الشعبي","المجموعة الثانية"],["دهوك","المجموعة الثانية"],["نوروز","المجموعة الثانية"],["الموصل","المجموعة الثانية"],["الكرمة","المجموعة الثانية"],["النفط","المجموعة الثانية"],
+ ["الزوراء","المجموعة الثالثة"],["الحسين","المجموعة الثالثة"],["الميناء","المجموعة الثالثة"],["الناصرية","المجموعة الثالثة"],["الصناعات الكهربائية","المجموعة الثالثة"],["كربلاء","المجموعة الثالثة"],["الكرخ","المجموعة الثالثة"],
+ ["القوة الجوية","المجموعة الرابعة"],["أمانة بغداد","المجموعة الرابعة"],["الكهرباء","المجموعة الرابعة"],["نفط ميسان","المجموعة الرابعة"],["الغراف","المجموعة الرابعة"],["السماوة","المجموعة الرابعة"],["النجف","المجموعة الرابعة"]],
+ U19:[],
+ U21:[
+ ["القوة الجوية","المجموعة الشمالية الأولى"],["أمانة بغداد","المجموعة الشمالية الأولى"],["زاخو","المجموعة الشمالية الأولى"],["نوروز","المجموعة الشمالية الأولى"],["غاز الشمال","المجموعة الشمالية الأولى"],["الكرمة","المجموعة الشمالية الأولى"],["الموصل","المجموعة الشمالية الأولى"],["سامراء","المجموعة الشمالية الأولى"],
+ ["الزوراء","المجموعة الشمالية الثانية"],["المصافي","المجموعة الشمالية الثانية"],["دهوك","المجموعة الشمالية الثانية"],["بيشمركة السليمانية","المجموعة الشمالية الثانية"],["أربيل","المجموعة الشمالية الثانية"],["الجولان","المجموعة الشمالية الثانية"],["ديالى","المجموعة الشمالية الثانية"],["الصناعة","المجموعة الشمالية الثانية"],["النفط","المجموعة الشمالية الثانية"],
+ ["الطلبة","المجموعة الجنوبية الأولى"],["الحسين","المجموعة الجنوبية الأولى"],["الميناء","المجموعة الجنوبية الأولى"],["النجف","المجموعة الجنوبية الأولى"],["الكهرباء","المجموعة الجنوبية الأولى"],["الناصرية","المجموعة الجنوبية الأولى"],["عفك","المجموعة الجنوبية الأولى"],["نفط ميسان","المجموعة الجنوبية الأولى"],
+ ["الشرطة","المجموعة الجنوبية الثانية"],["الكاظمية","المجموعة الجنوبية الثانية"],["الصناعات الكهربائية","المجموعة الجنوبية الثانية"],["نفط البصرة","المجموعة الجنوبية الثانية"],["القاسم","المجموعة الجنوبية الثانية"],["الكرخ","المجموعة الجنوبية الثانية"],["الشطرة","المجموعة الجنوبية الثانية"],["كربلاء","المجموعة الجنوبية الثانية"],["الغراف","المجموعة الجنوبية الثانية"]]
+};
+let db=JSON.parse(localStorage.getItem("iraqYouthStatsV1")||"null")||{clubs:{},players:[],matches:[],rules:{}};
+for(const c of ["U17","U19","U21"]) if(!db.clubs[c]) db.clubs[c]=seed[c].map((x,i)=>({id:c+"-"+i,name:x[0],group:x[1]}));
+function save(){localStorage.setItem("iraqYouthStatsV1",JSON.stringify(db));render()}
+function cat(){return document.getElementById("category").value}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function tab(id){document.querySelectorAll(".section").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===id));render()}
+function clubs(){return db.clubs[cat()]||[]}
+function age(d){if(!d)return "—";let b=new Date(d+"T00:00:00"),n=new Date(),a=n.getFullYear()-b.getFullYear();if(n.getMonth()<b.getMonth()||(n.getMonth()===b.getMonth()&&n.getDate()<b.getDate()))a--;return a}
+function eligibility(p){let r=db.rules[cat()];if(!p.dob)return "غير محدد";if(!r)return "العمر فقط — المواليد غير مثبتة";return Number(p.dob.slice(0,4))<=Number(r)?"ضمن سنة الميلاد المحددة":"خارج سنة الميلاد المحددة"}
+function fillSelect(id,arr,placeholder){let el=document.getElementById(id);if(!el)return;let old=el.value;el.innerHTML=(placeholder?'<option value="">'+placeholder+'</option>':'')+arr.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join("");if(arr.some(x=>x.id===old))el.value=old}
+function addClub(){let n=document.getElementById("clubName").value.trim(),g=document.getElementById("clubGroup").value.trim()||"غير محددة";if(!n)return alert("أدخل اسم النادي");if(clubs().some(x=>x.name===n))return alert("النادي موجود مسبقاً");clubs().push({id:"c"+Date.now(),name:n,group:g});document.getElementById("clubName").value="";save()}
+function removeClub(id){if(!confirm("حذف النادي من هذه الفئة؟"))return;db.clubs[cat()]=clubs().filter(x=>x.id!==id);save()}
+function savePlayer(){let id=document.getElementById("editPlayerId").value,p={id:id||"p"+Date.now(),cat:cat(),name:document.getElementById("pName").value.trim(),club:document.getElementById("pClub").value,dob:document.getElementById("pDob").value,pos:document.getElementById("pPos").value,num:document.getElementById("pNumber").value,apps:0,goals:0,assists:0,yellow:0,red:0};if(!p.name||!p.club||!p.dob)return alert("أكمل الاسم والنادي وتاريخ الميلاد");let old=db.players.find(x=>x.id===id);if(old)Object.assign(old,p,{apps:old.apps||0,goals:old.goals||0,assists:old.assists||0,yellow:old.yellow||0,red:old.red||0});else db.players.push(p);clearPlayer();save()}
+function clearPlayer(){["editPlayerId","pName","pDob","pNumber"].forEach(x=>document.getElementById(x).value="");}
+function editPlayer(id){let p=db.players.find(x=>x.id===id);document.getElementById("editPlayerId").value=p.id;document.getElementById("pName").value=p.name;document.getElementById("pClub").value=p.club;document.getElementById("pDob").value=p.dob;document.getElementById("pPos").value=p.pos;document.getElementById("pNumber").value=p.num;tab("players");window.scrollTo({top:0,behavior:"smooth"})}
+function deletePlayer(id){if(confirm("حذف اللاعب؟")){db.players=db.players.filter(x=>x.id!==id);save()}}
+function playerStats(id){let p=db.players.find(x=>x.id===id);let a=prompt("عدد المشاركات",p.apps||0);if(a===null)return;let g=prompt("عدد الأهداف",p.goals||0);if(g===null)return;let s=prompt("التمريرات الحاسمة",p.assists||0);if(s===null)return;let y=prompt("البطاقات الصفراء",p.yellow||0);if(y===null)return;let r=prompt("البطاقات الحمراء",p.red||0);if(r===null)return;Object.assign(p,{apps:+a||0,goals:+g||0,assists:+s||0,yellow:+y||0,red:+r||0});save()}
+function renderPlayers(){let list=db.players.filter(p=>p.cat===cat()),q=(document.getElementById("playerSearch")?.value||"").trim(),cf=document.getElementById("playerClubFilter")?.value||"";list=list.filter(p=>p.name.includes(q)&&(!cf||p.club===cf));let html=list.map(p=>{let c=clubs().find(x=>x.id===p.club);return `<tr><td>${esc(p.name)}</td><td>${esc(c?.name||"—")}</td><td>${esc(p.dob)}</td><td>${age(p.dob)}</td><td>${esc(p.pos)}</td><td>${esc(p.num||"—")}</td><td>${esc(eligibility(p))}</td><td><button class="small secondary" onclick="playerStats('${p.id}')">إحصائيات</button> <button class="small secondary" onclick="editPlayer('${p.id}')">تعديل</button> <button class="small danger" onclick="deletePlayer('${p.id}')">حذف</button></td></tr>`}).join("");document.getElementById("playersTable").innerHTML=`<div class="tablewrap"><table><thead><tr><th>اللاعب</th><th>النادي</th><th>الميلاد</th><th>العمر</th><th>المركز</th><th>الرقم</th><th>الأهلية</th><th>إجراءات</th></tr></thead><tbody>${html||'<tr><td colspan="8" class="empty">لا توجد أسماء مسجلة لهذه الفئة</td></tr>'}</tbody></table></div>`}
+function saveMatch(){let id=document.getElementById("editMatchId").value,m={id:id||"m"+Date.now(),cat:cat(),date:document.getElementById("mDate").value,home:document.getElementById("mHome").value,hg:+document.getElementById("mHG").value,away:document.getElementById("mAway").value,ag:+document.getElementById("mAG").value,venue:document.getElementById("mVenue").value};if(!m.home||!m.away||m.home===m.away||!m.date)return alert("اختر فريقين مختلفين وحدد التاريخ");let old=db.matches.find(x=>x.id===id);if(old)Object.assign(old,m);else db.matches.push(m);clearMatch();save()}
+function clearMatch(){["editMatchId","mDate","mVenue"].forEach(x=>document.getElementById(x).value="");document.getElementById("mHG").value=0;document.getElementById("mAG").value=0}
+function deleteMatch(id){if(confirm("حذف المباراة؟")){db.matches=db.matches.filter(x=>x.id!==id);save()}}
+function renderMatches(){let ms=db.matches.filter(m=>m.cat===cat()).sort((a,b)=>b.date.localeCompare(a.date));document.getElementById("matchesTable").innerHTML='<div class="tablewrap"><table><thead><tr><th>التاريخ</th><th>المباراة</th><th>النتيجة</th><th>الملعب</th><th></th></tr></thead><tbody>'+ (ms.map(m=>`<tr><td>${m.date}</td><td>${esc(clubs().find(x=>x.id===m.home)?.name||"") } × ${esc(clubs().find(x=>x.id===m.away)?.name||"")}</td><td><b>${m.hg} - ${m.ag}</b></td><td>${esc(m.venue)}</td><td><button class="small danger" onclick="deleteMatch('${m.id}')">حذف</button></td></tr>`).join("")||'<tr><td colspan="5" class="empty">لا توجد مباريات</td></tr>')+'</tbody></table></div>'}
+function renderClubs(){document.getElementById("clubsTable").innerHTML='<div class="tablewrap"><table><thead><tr><th>النادي</th><th>المجموعة</th><th>عدد اللاعبين</th><th></th></tr></thead><tbody>'+clubs().map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.group)}</td><td>${db.players.filter(p=>p.cat===cat()&&p.club===c.id).length}</td><td><button class="small danger" onclick="removeClub('${c.id}')">حذف</button></td></tr>`).join("")+'</tbody></table></div>'}
+function renderLeaders(){let ps=db.players.filter(p=>p.cat===cat()).sort((a,b)=>(b.goals||0)-(a.goals||0));document.getElementById("leaderTable").innerHTML='<div class="tablewrap"><table><thead><tr><th>الترتيب</th><th>اللاعب</th><th>النادي</th><th>مشاركات</th><th>أهداف</th><th>صناعة</th><th>صفراء</th><th>حمراء</th></tr></thead><tbody>'+ (ps.map((p,i)=>`<tr><td>${i+1}</td><td>${esc(p.name)}</td><td>${esc(clubs().find(c=>c.id===p.club)?.name||"")}</td><td>${p.apps||0}</td><td>${p.goals||0}</td><td>${p.assists||0}</td><td>${p.yellow||0}</td><td>${p.red||0}</td></tr>`).join("")||'<tr><td colspan="8" class="empty">أضف اللاعبين وسجل إحصائياتهم لعرض الترتيب</td></tr>')+'</tbody></table></div>';
+let rows=clubs().map(c=>{let ms=db.matches.filter(m=>m.cat===cat()&&(m.home===c.id||m.away===c.id)),w=0,d=0,l=0,gf=0,ga=0;ms.forEach(m=>{let h=m.home===c.id,forg=h?m.hg:m.ag,aga=h?m.ag:m.hg;gf+=forg;ga+=aga;if(forg>aga)w++;else if(forg===aga)d++;else l++});return {c,mp:ms.length,w,d,l,gf,ga,pts:w*3+d}}).sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga)));document.getElementById("standings").innerHTML='<div class="tablewrap"><table><thead><tr><th>#</th><th>النادي</th><th>لعب</th><th>فاز</th><th>تعادل</th><th>خسر</th><th>له</th><th>عليه</th><th>النقاط</th></tr></thead><tbody>'+rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.c.name)}</td><td>${r.mp}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf}</td><td>${r.ga}</td><td><b>${r.pts}</b></td></tr>`).join("")+'</tbody></table></div>'}
+function saveRules(){for(let c of ["U17","U19","U21"]){let v=document.getElementById("rule"+c.slice(1)).value;db.rules[c]=v?+v:null}save();alert("تم حفظ الإعدادات. تأكد من مطابقة السنوات لوثيقة الاتحاد الرسمية.")}
+function exportCSV(){let ps=db.players.filter(p=>p.cat===cat()),rows=[["الفئة","اللاعب","النادي","تاريخ الميلاد","المركز","الرقم","مشاركات","أهداف","صناعة","صفراء","حمراء"],...ps.map(p=>[p.cat,p.name,clubs().find(c=>c.id===p.club)?.name||"",p.dob,p.pos,p.num,p.apps,p.goals,p.assists,p.yellow,p.red])];let csv="\ufeff"+rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download=cat()+"_players_2026-2027.csv";a.click();URL.revokeObjectURL(a.href)}
+function backup(){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"}));a.download="iraq-youth-stats-backup.json";a.click();URL.revokeObjectURL(a.href)}
+function restore(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!d.clubs||!d.players||!d.matches)throw 0;db=d;save();alert("تمت استعادة النسخة")}catch{alert("ملف النسخة غير صالح")}};r.readAsText(f);e.target.value=""}
+function clearAll(){if(confirm("سيتم حذف كل اللاعبين والمباريات والتعديلات. هل أخذت نسخة احتياطية؟")&&confirm("تأكيد نهائي للحذف؟")){localStorage.removeItem("iraqYouthStatsV1");location.reload()}}
+function render(){let c=cat(),ps=db.players.filter(p=>p.cat===c),ms=db.matches.filter(m=>m.cat===c);document.getElementById("homeCat").textContent=c;document.getElementById("sPlayers").textContent=ps.length;document.getElementById("sClubs").textContent=clubs().length;document.getElementById("sMatches").textContent=ms.length;document.getElementById("sGoals").textContent=ms.reduce((s,m)=>s+m.hg+m.ag,0);let groups={};clubs().forEach(x=>groups[x.group]=(groups[x.group]||0)+1);document.getElementById("groupSummary").innerHTML=`عدد الأندية المسجلة: <b>${clubs().length}</b> — `+Object.entries(groups).map(([g,n])=>`${esc(g)}: ${n}`).join(" | ");document.getElementById("recentMatches").innerHTML=ms.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(m=>`<p>${m.date} — ${esc(clubs().find(x=>x.id===m.home)?.name||"")} <b>${m.hg}-${m.ag}</b> ${esc(clubs().find(x=>x.id===m.away)?.name||"")}</p>`).join("")||'<div class="empty">لا توجد نتائج مسجلة بعد</div>';
+fillSelect("pClub",clubs(),"اختر النادي");fillSelect("playerClubFilter",clubs(),"كل الأندية");fillSelect("mHome",clubs(),"الفريق الأول");fillSelect("mAway",clubs(),"الفريق الثاني");renderPlayers();renderClubs();renderMatches();renderLeaders();
+for(let c2 of ["U17","U19","U21"]){let el=document.getElementById("rule"+c2.slice(1));if(el&&document.activeElement!==el)el.value=db.rules[c2]||""}
+}
+render();
+</script></body></html>
